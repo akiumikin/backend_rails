@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  app:
+    build: .
+    image: rails:202303
+    container_name: rails
+    tty: true
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: "development"
+      DB_USER_NAME: "info"
+      DB_PASSWORD: "password"
+      DB_HOST: "postgres"
+      EDITOR: "vim"
+    volumes:
+      - ./:/var/www/app
+      - ~/.ssh:/root/.ssh
+      - root-data:/root # .bash_profileなどを永続化
+      - vendor-data:/var/www/app/vendor
+    networks: # databaseリポジトリのcontainerとネットワーク共有
+      database_default:
+    # command: >
+    #   bash -c "rm -f tmp/pids/server.pid &&
+    #   touch /root/.bash_profile &&
+    #   bundle &&
+    #   bin/rails db:create db:migrate db:seed &&
+    #   bundle exec rails server -b 0.0.0.0 -p 3000"
+
+volumes:
+  root-data:
+    driver: local
+  vendor-data:
+    driver: local
+
+networks:
+  database_default:
+    external: true
