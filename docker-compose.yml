@@ -22,12 +22,12 @@ services:
       - vendor-data:/var/www/app/vendor
     networks: # databaseリポジトリのcontainerとネットワーク共有
       database_default:
-    # command: >
-    #   bash -c "rm -f tmp/pids/server.pid &&
-    #   touch /root/.bash_profile &&
-    #   bundle &&
-    #   bin/rails db:create db:migrate db:seed &&
-    #   bundle exec rails server -b 0.0.0.0 -p 3000"
+    command: >
+      bash -c "rm -f tmp/pids/server.pid &&
+      touch /root/.bash_profile &&
+      bundle &&
+      bin/rails db:create db:migrate db:seed &&
+      bundle exec rails server -b 0.0.0.0 -p 3000"
 
 volumes:
   root-data:
