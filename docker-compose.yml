@@ -5,6 +5,7 @@ services:
     build: .
     image: rails:202303
     container_name: rails
+    restart: always
     tty: true
     stdin_open: true
     ports:
@@ -19,15 +20,15 @@ services:
       - ./:/var/www/app
       - ~/.ssh:/root/.ssh
       - root-data:/root # .bash_profileなどを永続化
-      - vendor-data:/var/www/app/vendor
+      - vendor-data:/var/www/app/vendor/
     networks: # databaseリポジトリのcontainerとネットワーク共有
       database_default:
     command: >
       bash -c "rm -f tmp/pids/server.pid &&
       touch /root/.bash_profile &&
-      bundle &&
+      bundle install --path vendor/bundler &&
       bin/rails db:create db:migrate db:seed &&
-      bundle exec rails server -b 0.0.0.0 -p 3000"
+      bundle exec rails server"
 
 volumes:
   root-data:
