@@ -11,6 +11,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      RAILS_RELATIVE_URL_ROOT: /rails
       RAILS_ENV: "development"
       DB_USER_NAME: "info"
       DB_PASSWORD: "password"
