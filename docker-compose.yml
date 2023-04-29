@@ -22,8 +22,8 @@ services:
       - ~/.ssh:/root/.ssh
       - root-data:/root # .bash_profileなどを永続化
       - vendor-data:/var/www/app/vendor/
-    networks: # databaseリポジトリのcontainerとネットワーク共有
-      database_default:
+    networks: # nginxを基準にcontainerとネットワーク共有
+      nginx_default:
     command: >
       bash -c "rm -f tmp/pids/server.pid &&
       touch /root/.bash_profile &&
@@ -38,5 +38,5 @@ volumes:
     driver: local
 
 networks:
-  database_default:
+  nginx_default:
     external: true
