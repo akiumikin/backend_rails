@@ -7,6 +7,13 @@ module Types
 
     # ------------------------------------------------
 
+    field :connection_test, String, null: true, description: '接続確認'
+    def connection_test
+      'OK'
+    end
+
+    # ------------------------------------------------
+
     field :client, Types::Client, null: true, description: '企業' do
       argument :id,         ID,     required: true
       argument :cognito_id, String, required: true
