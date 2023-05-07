@@ -1,0 +1,17 @@
+class CreateResourceStepItems < ActiveRecord::Migration[7.0]
+  def change
+    create_table :resource_step_items do |t|
+      t.integer  :flow_step_id,       null: false
+      t.integer  :flow_step_field_id, null: false
+      t.integer  :resource_item_id,   null: false
+      t.integer  :status,             null: false
+      t.datetime :deleted_at
+
+      t.timestamps
+    end
+
+    add_index :resource_step_items, :flow_step_id
+    add_index :resource_step_items, :flow_step_field_id
+    add_index :resource_step_items, :resource_item_id
+  end
+end
