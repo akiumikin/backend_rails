@@ -20,8 +20,8 @@ module Types
     end
 
     def client(**args)
-      check_current_user(args[:id], args[:cognito_id])
-      ::Client.find(args[:id])
+      client_id = client_id(args[:id], args[:cognito_id])
+      ::Client.find(client_id)
     end
 
     # ------------------------------------------------
@@ -44,7 +44,7 @@ module Types
     end
 
     def users(page: 1, limit: 25, **args)
-      check_current_user(args[:client_id], args[:cognito_id])
+      client_id = client_id(args[:client_id], args[:cognito_id])
       raise GraphQL::ExecutionError, "件数の最大値は#{PAGE_LIMIT}件です" if limit > PAGE_LIMIT
 
       params = { page:, limit:, args: }
@@ -63,12 +63,12 @@ module Types
     end
 
     def flows(page: 1, limit: 25, **args)
-      check_current_user(args[:client_id], args[:cognito_id])
+      client_id = client_id(args[:client_id], args[:cognito_id])
       raise GraphQL::ExecutionError, "件数の最大値は#{PAGE_LIMIT}件です" if limit > PAGE_LIMIT
 
       params = { page:, limit:, args: }
 
-      { params:, data: ::Flow.where(client_id: args[:client_id]) }
+      { params:, data: ::Flow.where(client_id:) }
     end
 
     # ------------------------------------------------
@@ -81,12 +81,12 @@ module Types
     end
 
     def tag_groups(page: 1, limit: 25, **args)
-      check_current_user(args[:client_id], args[:cognito_id])
+      client_id = client_id(args[:client_id], args[:cognito_id])
       raise GraphQL::ExecutionError, "件数の最大値は#{PAGE_LIMIT}件です" if limit > PAGE_LIMIT
 
       params = { page:, limit:, args: }
 
-      { params:, data: ::TagGroup.where(client_id: args[:client_id]) }
+      { params:, data: ::TagGroup.where(client_id:) }
     end
 
     # ------------------------------------------------
@@ -99,23 +99,25 @@ module Types
     end
 
     def resources(page: 1, limit: 25, **args)
-      check_current_user(args[:client_id], args[:cognito_id])
+      client_id = client_id(args[:client_id], args[:cognito_id])
       raise GraphQL::ExecutionError, "件数の最大値は#{PAGE_LIMIT}件です" if limit > PAGE_LIMIT
 
       params = { page:, limit:, args: }
 
-      { params:, data: ::Resource.where(client_id: args[:client_id]) }
+      { params:, data: ::Resource.where(client_id:) }
     end
 
     # ------------------------------------------------
 
     private
 
-    def check_current_user(client_id, cognito_id)
-      user_ids = ::User.where(cognito_id: cognito_id).pluck(:id)
-      client_ids = ::ClientUser.where(user_id: user_ids).pluck(:client_id)
+    def client_id(client_id, cognito_id)
+      user_id = ::User.find_by!(cognito_id: cognito_id).id
+      return ::ClientUser.find_by!(user_id: user_id).id if client_id.to_i.zero?
 
+      client_ids = ::ClientUser.where(user_id: user_id).pluck(:client_id)
       raise GraphQL::ExecutionError, '所属していない企業へのアクセスです。' unless client_ids.include?(client_id.to_i)
+      client_id
     end
 
   end

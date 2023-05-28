@@ -3,6 +3,7 @@ unless Client.find_by(name: 'recruit')
 
   ActiveRecord::Base.transaction do
     client = Client.create!(name: 'recruit')
+    my_client = Client.create!(name: 'myapp')
 
     configs = [
       {kind: :notification, value: 'slack'}
@@ -14,6 +15,7 @@ unless Client.find_by(name: 'recruit')
     )
 
     ClientUser.create!(client_id: client.id, user_id: user.id, role: :admin)
+    ClientUser.create!(client_id: my_client.id, user_id: user.id, role: :admin)
     User::Profile.create!(
       user_id: user.id,
       first_name: '太郎',
