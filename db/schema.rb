@@ -56,6 +56,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_06_000101) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["flow_step_id"], name: "index_flow_step_fields_on_flow_step_id"
+    t.index ["order_index"], name: "index_flow_step_fields_on_order_index"
   end
 
   create_table "flow_steps", force: :cascade do |t|
@@ -82,9 +83,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_06_000101) do
     t.integer "resource_id", null: false
     t.string "name", null: false
     t.integer "input_type", null: false
+    t.integer "order_index", null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["order_index"], name: "index_resource_fields_on_order_index"
     t.index ["resource_id", "name", "deleted_at"], name: "index_resource_fields_on_resource_id_and_name_and_deleted_at", unique: true
     t.index ["resource_id"], name: "index_resource_fields_on_resource_id"
   end

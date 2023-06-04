@@ -4,6 +4,7 @@ class CreateResourceFields < ActiveRecord::Migration[7.0]
       t.integer  :resource_id, null: false
       t.string   :name,        null: false
       t.integer  :input_type,  null: false
+      t.integer  :order_index, null: false
       t.datetime :deleted_at
 
       t.timestamps
@@ -11,5 +12,6 @@ class CreateResourceFields < ActiveRecord::Migration[7.0]
 
     add_index :resource_fields, :resource_id
     add_index :resource_fields, [:resource_id, :name, :deleted_at], unique: true
+    add_index :resource_fields, :order_index
   end
 end

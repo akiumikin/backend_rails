@@ -201,19 +201,21 @@ unless Client.find_by(name: 'recruit')
       { input_type: 'tag',     name: '特徴' },
     ]
 
-    first_resource_fields.each do |field|
+    first_resource_fields.each_with_index do |field, idx|
       Resource::Field.create!(
         resource_id: first_resource.id,
         name: field[:name],
-        input_type: field[:input_type]
+        input_type: field[:input_type],
+        order_index: idx + 1
       )
     end
 
-    second_resource_fields.each do |field|
+    second_resource_fields.each_with_index do |field, idx|
       Resource::Field.create!(
         resource_id: second_resource.id,
         name: field[:name],
-        input_type: field[:input_type]
+        input_type: field[:input_type],
+        order_index: idx + 1
       )
     end
 

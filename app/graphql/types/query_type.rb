@@ -92,10 +92,11 @@ module Types
     # ------------------------------------------------
 
     field :resources, Types::ResourceIndex, null: true, description: 'リソース' do
-      argument :client_id,  ID,     required: true
-      argument :cognito_id, String, required: true
-      argument :page,       Integer, required: false
-      argument :limit,      Integer, required: false
+      argument :client_id,   ID,     required: true
+      argument :cognito_id,  String, required: true
+      argument :resource_id, Integer, required: false
+      argument :page,        Integer, required: false
+      argument :limit,       Integer, required: false
     end
 
     def resources(page: 1, limit: 25, **args)
@@ -104,7 +105,10 @@ module Types
 
       params = { page:, limit:, args: }
 
-      { params:, data: ::Resource.where(client_id:) }
+      resources = ::Resource.where(client_id:)
+      resources = resources.where(id: args[:resource_id]) if args[:resource_id].present?
+
+      { params:, data: resources }
     end
 
     # ------------------------------------------------

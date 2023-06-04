@@ -14,6 +14,7 @@
 # Indexes
 #
 #  index_flow_step_fields_on_flow_step_id  (flow_step_id)
+#  index_flow_step_fields_on_order_index   (order_index)
 #
 class Flow::Step::Field < ApplicationRecord
   self.table_name = "flow_step_fields"

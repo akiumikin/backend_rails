@@ -6,12 +6,14 @@
 #  deleted_at  :datetime
 #  input_type  :integer          not null
 #  name        :string           not null
+#  order_index :integer          not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  resource_id :integer          not null
 #
 # Indexes
 #
+#  index_resource_fields_on_order_index                          (order_index)
 #  index_resource_fields_on_resource_id                          (resource_id)
 #  index_resource_fields_on_resource_id_and_name_and_deleted_at  (resource_id,name,deleted_at) UNIQUE
 #

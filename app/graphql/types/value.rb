@@ -3,7 +3,7 @@ class Types::Value < Types::BaseObject
   field :kind,    String,  null: true,  description: '種別'
   field :version, Integer, null: true,  description: 'バージョン'
   field :value,   String,  null: false, description: '値'
-  field :field,   ScalarTypes::ExString,  null: true,  description: 'フィールド情報'
+  field :field,   Types::Field,  null: true,  description: 'フィールド情報'
 
   def field
     case object.kind
@@ -15,10 +15,10 @@ class Types::Value < Types::BaseObject
   end
 
   def resource_field
-    AssociationLoader.for(Value, :resource_field).load(object).then { |f| f.attributes.to_hash }
+    AssociationLoader.for(Value, :resource_field).load(object)
   end
 
   def step_field
-    AssociationLoader.for(Value, :step_field).load(object).then { |f| f.attributes.to_hash }
+    AssociationLoader.for(Value, :step_field).load(object)
   end
 end

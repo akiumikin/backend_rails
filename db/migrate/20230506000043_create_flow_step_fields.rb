@@ -11,5 +11,6 @@ class CreateFlowStepFields < ActiveRecord::Migration[7.0]
     end
 
     add_index :flow_step_fields, :flow_step_id
+    add_index :flow_step_fields, :order_index
   end
 end
