@@ -58,6 +58,8 @@ gem 'graphql'        # https://github.com/rmosolgo/graphql-ruby
 gem 'graphiql-rails' # https://github.com/rmosolgo/graphiql-rails
 gem 'graphql-batch'  # https://github.com/Shopify/graphql-batch
 
+gem 'faker' # https://github.com/faker-ruby/faker
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]

@@ -36,21 +36,21 @@ module Types
 
     # ------------------------------------------------
 
-    field :users, Types::UserIndex, null: true, description: 'ユーザー' do
+    field :client_users, Types::ClientUserIndex, null: true, description: 'ユーザー' do
       argument :client_id,  ID,     required: true
       argument :cognito_id, String, required: true
       argument :page,       Integer, required: false
       argument :limit,      Integer, required: false
     end
 
-    def users(page: 1, limit: 25, **args)
+    def client_users(page: 1, limit: 25, **args)
       client_id = client_id(args[:client_id], args[:cognito_id])
       raise GraphQL::ExecutionError, "件数の最大値は#{PAGE_LIMIT}件です" if limit > PAGE_LIMIT
 
       params = { page:, limit:, args: }
-      user_ids = ::ClientUser.where(client_id: args[:client_id]).pluck(:user_id)
+      client_users = ::ClientUser.where(client_id: args[:client_id])
 
-      { params:, data: ::User.where(id: user_ids) }
+      { params:, data: client_users }
     end
 
     # ------------------------------------------------

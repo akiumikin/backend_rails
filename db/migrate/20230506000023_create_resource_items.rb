@@ -1,9 +1,9 @@
 class CreateResourceItems < ActiveRecord::Migration[7.0]
   def change
     create_table :resource_items do |t|
-      t.integer  :resource_id, null: false
-      t.integer  :step_id,     null: false
-      t.string   :status,      null: false
+      t.integer  :resource_id,  null: false
+      t.integer  :step_item_id, null: true,  comment: '実質NULLは許容しないが、関連テーブルと相互にIDが必要となるため、NULLを許容して後から値を入れる'
+      t.integer  :status,       null: false
       t.datetime :deleted_at
 
       t.timestamps

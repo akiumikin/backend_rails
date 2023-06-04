@@ -24,6 +24,19 @@ unless Client.find_by(name: 'recruit')
       phone_number: '000-0000-0000'
     )
 
+    # ユーザー一覧表示用データ、ログインの想定はしないため正しいcognitoIdは付与しない
+    (1..49).each do |idx|
+      temp_user = User.create!(cognito_id: "recruit_#{idx.to_s}")
+      ClientUser.create!(client_id: client.id, user_id: temp_user.id, role: :normal)
+      User::Profile.create!(
+        user_id: temp_user.id,
+        first_name: "#{idx}太郎",
+        last_name: "佐藤",
+        phone_number: "000-0000-#{sprintf("%04d", idx)}",
+        email: "recruit_sample#{idx}@akiumi.net"
+      )
+    end
+
     first_flow = Flow.create!(
       client_id: client.id,
       name: '候補者面談フロー'
@@ -202,6 +215,87 @@ unless Client.find_by(name: 'recruit')
         name: field[:name],
         input_type: field[:input_type]
       )
+    end
+
+    # 候補者データ作成
+    first_steps = first_flow.steps
+    (1..50).each do |num|
+      item = Resource::Item.create!(
+        resource_id: first_resource.id,
+        step_item_id: nil,
+        status: :lead
+      )
+
+      item.resource.fields.each do |field|
+        case field.name
+        when '氏名' then
+          Value.create!(value: "鈴木 #{num}郎", kind: :resource, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+        when 'メールアドレス' then
+          Value.create!(value: "candidate+#{num}@akiumi.net", kind: :resource, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+        when '電話番号' then
+          Value.create!(value: "000-0000-#{sprintf("%04d", num)}", kind: :resource, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+        when '住所' then
+          Value.create!(value: "東京都新宿区新宿x-x-x", kind: :resource, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+        when '企業職種' then
+          Value.create!(value: "XXX", kind: :resource, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+        when '希望年収' then
+          Value.create!(value: "xxx,xxx円", kind: :resource, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+        end
+
+      end
+
+      (0..( num % first_steps.count ) ).each do |step_num|
+        flow_step = first_steps[step_num]
+
+        step_item = Resource::Step::Item.create!(
+          flow_step_id: flow_step.id,
+          resource_item_id: item.id,
+          order_index: step_num + 1,
+        )
+
+        if step_num == num % first_steps.count
+          item.update!(
+            step_item_id: step_item.id,
+            status: flow_step.status
+          )
+        end
+
+        step_item.origin_step.fields.each do |field|
+          case field.name
+          when '面談日時' then
+            Value.create!(value: (Time.zone.now - 7.days).strftime('%Y-%m-%d %H:%M'), kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when '接触日時' then
+            Value.create!(value: (Time.zone.now - 10.days).strftime('%Y-%m-%d %H:%M'), kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when 'エントリー日' then
+            Value.create!(value: (Time.zone.now - 13.days).strftime('%Y-%m-%d'), kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when '事前接触内容' then
+            Value.create!(value: "会社説明会にて初接触\nエントリーシート回収済み", kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when 'オファー内容' then
+            Value.create!(value: "月給：xxx,xxx円\n職種：yy\n勤務開始：XX/YY", kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when '接触内容' then
+            Value.create!(value: "オンラインMTGにて実施\n福利厚生/採用条件資料送付済み", kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when '承諾内容' then
+            Value.create!(value: "内定承諾済み\n一部資料の押印が遅延", kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when 'NG理由' then
+            Value.create!(value: "スキル不足\n第N次面接にて不通過", kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when '補足' then
+            Value.create!(value: "エージェント連絡済み\n本人連絡済み", kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when '保留理由' then
+            Value.create!(value: "現職の継続\n半年以降先にて再アプローチ", kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when '保留理由' then
+            Value.create!(value: "現職の継続\n半年以降先にて再アプローチ", kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when '面談日時' then
+            Value.create!(value: (Time.zone.now - 7.days + step_num.days).strftime('%Y-%m-%d %H:%M'), kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when '実施日' then
+            Value.create!(value: (Time.zone.now - 7.days + step_num.days).strftime('%Y-%m-%d'), kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when '通過日' then
+            Value.create!(value: (Time.zone.now - 7.days + (step_num + 1).days).strftime('%Y-%m-%d'), kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          when '面談内容' then
+            Value.create!(value: "先行通過\n評価：B\n伝達事項：ー", kind: :flow_step, item_id: item.id, field_id: field.id, user_id: user.id, version: 1)
+          end
+        end
+      end
+
     end
 
   end

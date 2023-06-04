@@ -91,8 +91,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_06_000101) do
 
   create_table "resource_items", force: :cascade do |t|
     t.integer "resource_id", null: false
-    t.integer "step_id", null: false
-    t.string "status", null: false
+    t.integer "step_item_id", comment: "実質NULLは許容しないが、関連テーブルと相互にIDが必要となるため、NULLを許容して後から値を入れる"
+    t.integer "status", null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -104,14 +104,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_06_000101) do
 
   create_table "resource_step_items", force: :cascade do |t|
     t.integer "flow_step_id", null: false
-    t.integer "flow_step_field_id", null: false
     t.integer "resource_item_id", null: false
-    t.integer "status", null: false
+    t.integer "order_index", null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["flow_step_field_id"], name: "index_resource_step_items_on_flow_step_field_id"
     t.index ["flow_step_id"], name: "index_resource_step_items_on_flow_step_id"
+    t.index ["order_index"], name: "index_resource_step_items_on_order_index"
     t.index ["resource_item_id"], name: "index_resource_step_items_on_resource_item_id"
   end
 

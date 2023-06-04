@@ -23,5 +23,5 @@ class ClientUser < ApplicationRecord
   belongs_to :client
   belongs_to :user
 
-  enum role: { admin: 1 }
+  enum role: { admin: 1, normal: 2 }
 end

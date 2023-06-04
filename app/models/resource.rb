@@ -31,5 +31,9 @@ class Resource < ApplicationRecord
              foreign_key: 'second_parent_resource_id',
              optional: true
 
+  has_many :items,  class_name: 'Resource::Item',       foreign_key: 'resource_id'
+  has_many :steps,  class_name: 'Resource::Step::Item', foreign_key: 'resource_id'
+  has_many :fields, class_name: 'Resource::Field',      foreign_key: 'resource_id'
+
   validates :name, presence: true
 end

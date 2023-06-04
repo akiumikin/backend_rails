@@ -23,6 +23,18 @@ class Value < ApplicationRecord
   self.table_name = "values"
 
   belongs_to :user
+  belongs_to :resource_field, class_name: 'Resource::Field', foreign_key: 'field_id'
+  def resource_field
+    return unless kind == 'resource'
+
+    super
+  end
+  belongs_to :step_field, class_name: 'Flow::Step::Field', foreign_key: 'field_id'
+  def step_field
+    return unless kind == 'flow_step'
+
+    super
+  end
 
   validates :kind,    presence: true
   validates :version, presence: true
