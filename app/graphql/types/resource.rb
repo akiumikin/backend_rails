@@ -4,7 +4,11 @@ class Types::Resource < Types::BaseObject
   field :client, Types::Client,  null: true, description: '企業'
   field :flow,   Types::Flow,    null: true, description: 'フロー'
   field :fields, [Types::Field], null: true, description: 'リソースの基本データのフィールド'
-  field :items,  [Types::ResourceItem],  null: true, description: 'リソースのデータ内容'
+  field :items,  [Types::ResourceItem],  null: true, description: 'リソースのデータ内容' do
+    argument :page,  Integer, required: false
+    argument :limit, Integer, required: false
+  end
+  field :item_count,             Int,             null: true, description: '件数' 
   field :first_parent_resource,  Types::Resource, null: true, description: '親リソース1'
   field :second_parent_resource, Types::Resource, null: true, description: '親リソース2'
 
@@ -16,8 +20,13 @@ class Types::Resource < Types::BaseObject
     AssociationLoader.for(Resource, :flow).load(object)
   end
 
-  def items
-    AssociationLoader.for(Resource, :items).load(object)
+  def items(page: 1, limit: 25, **args)
+    # AssociationLoader.for(Resource, :items).load(object)
+    object.items.offset(limit * (page - 1)).limit(limit)
+  end
+
+  def item_count
+    object.items.count
   end
 
   def fields
