@@ -121,7 +121,7 @@ module Types
 
       client_ids = ::ClientUser.where(user_id: user_id).pluck(:client_id)
       client_id = client_ids.first if client_id.to_i.zero?
-      raise GraphQL::ExecutionError, '所属していない企業へのアクセスです。' unless client_ids.include?(client_id)
+      raise GraphQL::ExecutionError, '所属していない企業へのアクセスです。' unless client_ids.include?(client_id.to_i)
       client_id
     end
 
