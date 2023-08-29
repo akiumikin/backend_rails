@@ -92,7 +92,7 @@ module Types
     # ------------------------------------------------
 
     field :resources, Types::ResourceIndex, null: true, description: 'リソース' do
-      argument :client_id,   ID,     required: true
+      argument :client_id,   ID,     required: false
       argument :cognito_id,  String, required: true
       argument :resource_id, Integer, required: false
       argument :page,        Integer, required: false
@@ -117,10 +117,11 @@ module Types
 
     def client_id(client_id, cognito_id)
       user_id = ::User.find_by!(cognito_id: cognito_id).id
-      return ::ClientUser.find_by!(user_id: user_id).id if client_id.to_i.zero?
+      raise GraphQL::ExecutionError, 'ログインが必要です。' if user_id.to_i.zero?
 
       client_ids = ::ClientUser.where(user_id: user_id).pluck(:client_id)
-      raise GraphQL::ExecutionError, '所属していない企業へのアクセスです。' unless client_ids.include?(client_id.to_i)
+      client_id = client_ids.first if client_id.to_i.zero?
+      raise GraphQL::ExecutionError, '所属していない企業へのアクセスです。' unless client_ids.include?(client_id)
       client_id
     end
 
